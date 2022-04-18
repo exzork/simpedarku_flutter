@@ -45,6 +45,9 @@ class UserProfile{
   String? bloodType;
   String? phone;
   String? emergencyContact;
+  String? password;
+  String? passwordConfirmation;
+  String? currentPassword;
 
   UserProfile({
     required this.id,
@@ -81,18 +84,14 @@ class UserProfile{
   );
 
   Map<String, dynamic> toMap()=>{
-    "id": id,
-    "name": name,
     "email": email,
-    "is_admin": isAdmin,
-    "is_stakeholder": isStakeholder,
-    "stakeholder_id": stakeholderId,
-    "gender": gender,
-    "nik": nik,
     "address": address,
     "blood_type": bloodType,
     "phone": phone,
-    "emergency_contact": emergencyContact
+    "emergency_contact": emergencyContact,
+    "password": password,
+    "password_confirmation": passwordConfirmation,
+    "current_password": currentPassword
   };
 }
 
@@ -146,3 +145,92 @@ class UserProfileResponse{
   }
 }
 
+class UserLogin{
+  String? email;
+  String? password;
+
+  UserLogin({
+    required this.email,
+    required this.password
+  });
+
+  factory UserLogin.fromJson(String str) => UserLogin.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory UserLogin.fromMap(Map<String, dynamic> json) => UserLogin(
+    email: json["email"],
+    password: json["password"],
+  );
+
+  Map<String, dynamic> toMap() => {
+    "email": email,
+    "password": password,
+  };
+
+  @override
+  String toString() {
+    return toMap().toString();
+  }
+}
+
+class UserRegister{
+  String? name;
+  String? gender;
+  String? nik;
+  String? address;
+  String? bloodType;
+  String? emergencyContact;
+  String? email;
+  String? phone;
+  String? password;
+  String? passwordConfirmation;
+
+  UserRegister({
+    required this.name,
+    required this.gender,
+    required this.nik,
+    required this.address,
+    required this.bloodType,
+    required this.emergencyContact,
+    required this.email,
+    required this.phone,
+    required this.password,
+    required this.passwordConfirmation
+  });
+
+  factory UserRegister.fromJson(String str) => UserRegister.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory UserRegister.fromMap(Map<String, dynamic> json) => UserRegister(
+    name: json["name"],
+    gender: json["gender"],
+    nik: json["nik"],
+    address: json["address"],
+    bloodType: json["blood_type"],
+    emergencyContact: json["emergency_contact"],
+    email: json["email"],
+    phone: json["phone"],
+    password: json["password"],
+    passwordConfirmation: json["password_confirmation"],
+  );
+
+  Map<String, dynamic> toMap() => {
+    "name": name,
+    "gender": gender,
+    "nik": nik,
+    "address": address,
+    "blood_type": bloodType,
+    "emergency_contact": emergencyContact,
+    "email": email,
+    "phone": phone,
+    "password": password,
+    "password_confirmation": passwordConfirmation,
+  };
+
+  @override
+  String toString() {
+    return toMap().toString();
+  }
+}

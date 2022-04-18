@@ -2,27 +2,33 @@ import 'dart:convert';
 
 import 'dart:developer';
 
+import 'dart:io';
+
+import 'package:camera/camera.dart';
+
 class Report{
-  int id;
+  int? id;
   dynamic type;
   dynamic user;
   String? title;
   String? location;
   String? description;
   String? imageUrl;
-  String status;
-  String createdAt;
+  XFile? image;
+  String? status;
+  String? createdAt;
 
   Report({
-    required this.id,
+    this.id,
     this.type,
     this.user,
     this.title,
     this.location,
     this.description,
     this.imageUrl,
-    required this.status,
-    required this.createdAt,
+    this.image,
+    this.status,
+    this.createdAt,
   });
 
   factory Report.fromJson(String str){
@@ -52,6 +58,15 @@ class Report{
       status: json['status'],
       createdAt: json['created_at'],
     );
+  }
+
+  Map<String, String> toMap(){
+    return {
+      'type': type,
+      'title': title ?? '',
+      'location': location ?? '',
+      'description': description ?? '',
+    };
   }
 
   Map<String, dynamic> toJson(){

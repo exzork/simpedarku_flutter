@@ -30,22 +30,13 @@ class ApiService {
     return headers;
   }
 
-  static Future<ApiResponse> login(String email, String password) async {
-    final response = await client.post(Uri.parse(baseUrl + "/login"), body: {
-      "email": email,
-      "password": password,
-    }, headers: headers);
-    log(response.body);
+  static Future<ApiResponse> login(UserLogin data) async {
+    final response = await client.post(Uri.parse(baseUrl + "/login"), body: data.toMap(), headers: headers);
     return ApiResponse.fromJson(response.body);
   }
 
-  static Future<ApiResponse> register(String name, String email, String password) async {
-    final response = await client.post(Uri.parse(baseUrl + "/register"), body: {
-      "name": name,
-      "email": email,
-      "password": password,
-    }, headers: headers);
-    log(response.body);
+  static Future<ApiResponse> register(UserRegister data) async {
+    final response = await client.post(Uri.parse(baseUrl + "/register"), body: data.toMap(), headers: headers);
     return ApiResponse.fromJson(response.body);
   }
 
@@ -59,7 +50,6 @@ class ApiService {
 
   static Future<UserProfile?> getUser() async {
     final response = await client.get(Uri.parse(baseUrl + "/api/user/profile"),headers: await headersWithToken());
-    log(response.body);
     ApiResponse apiResponse = ApiResponse.fromJson(response.body);
     UserProfileResponse? userProfileResponse;
     if(apiResponse.status == "success") {
@@ -68,16 +58,14 @@ class ApiService {
     return userProfileResponse?.userProfile;
   }
 
+  static Future<ApiResponse> updateUser(UserProfile data) async {
+    final response = await client.put(Uri.parse(baseUrl + "/api/user/profile"), body: data.toMap(), headers: await headersWithToken());
+    return ApiResponse.fromJson(response.body);
+  }
+
   static Future<bool> checkLogin() async {
-    log("checkLogin");
     final response = await client.get(Uri.parse(baseUrl + "/api/user/profile"), headers: await headersWithToken());
-    if (response.statusCode == 200) {
-      log(response.body);
-      return true;
-    } else {
-      log(response.body);
-      return false;
-    }
+    return response.statusCode == 200;
   }
 
   static Future<List<Report>> getReports() async {
@@ -89,5 +77,18 @@ class ApiService {
       reports = reportsResponse.reports;
     }
     return reports;
+  }
+
+  static Future<ApiResponse> createReport(Report data) async {
+    var request = http.MultipartRequest("POST", Uri.parse(baseUrl + "/api/reports"));
+    request.headers.addAll(await headersWithToken());
+    request.fields.addAll(data.toMap());
+    if(data.image?.path != null) {
+      request.files.add(await http.MultipartFile.fromPath('image', data.image!.path));
+    }
+    final streamedResponse = await client.send(request);
+    final response = await http.Response.fromStream(streamedResponse);
+    ApiResponse apiResponse = ApiResponse.fromJson(response.body);
+    return apiResponse;
   }
 }
